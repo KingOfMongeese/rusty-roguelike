@@ -1,14 +1,12 @@
 use crate::prelude::*;
 
 pub struct Player {
-    pub position: Point
+    pub position: Point,
 }
 
 impl Player {
     pub fn new(position: Point) -> Self {
-        Self {
-            position
-        }
+        Self { position }
     }
 
     /// update player position, checks if pos is valid.
@@ -19,7 +17,7 @@ impl Player {
                 VirtualKeyCode::D => Point::new(1, 0),
                 VirtualKeyCode::W => Point::new(0, -1),
                 VirtualKeyCode::S => Point::new(0, 1),
-                _ => Point::zero()
+                _ => Point::zero(),
             };
 
             let new_pos = self.position + delta;
@@ -31,6 +29,12 @@ impl Player {
 
     /// render the player
     pub fn render(&self, ctx: &mut BTerm) {
-        ctx.set(self.position.x, self.position.y, WHITE, BLACK, to_cp437('@'));
+        ctx.set(
+            self.position.x,
+            self.position.y,
+            WHITE,
+            BLACK,
+            to_cp437('@'),
+        );
     }
 }

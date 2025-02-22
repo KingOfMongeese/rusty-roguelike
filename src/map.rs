@@ -7,16 +7,16 @@ pub fn get_map_idx(x: i32, y: i32) -> usize {
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum TileType {
-    Wall, 
+    Wall,
     Floor,
 }
 
 pub struct Map {
-    pub tiles: Vec<TileType>
+    pub tiles: Vec<TileType>,
 }
 
 impl Map {
-    pub fn new() -> Self{
+    pub fn new() -> Self {
         Self {
             tiles: vec![TileType::Floor; NUM_TILES],
         }
