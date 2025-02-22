@@ -18,7 +18,7 @@ pub struct Map {
 impl Map {
     pub fn new() -> Self {
         Self {
-            tiles: vec![TileType::Floor; NUM_TILES],
+            tiles: vec![TileType::Wall; NUM_TILES],
         }
     }
 
@@ -48,11 +48,11 @@ impl Map {
                 let idx = get_map_idx(x, y);
                 match self.tiles[idx] {
                     TileType::Floor => {
-                        ctx.set(x, y, YELLOW, BLACK, to_cp437('.'));
+                        ctx.set(x, y, DARKGRAY, BLACK, to_cp437('.'));
                     }
 
                     TileType::Wall => {
-                        ctx.set(x, y, GREEN, BLACK, to_cp437('#'));
+                        ctx.set(x, y, DARKBLUE, BLACK, to_cp437('#'));
                     }
                 }
             }

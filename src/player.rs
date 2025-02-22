@@ -32,7 +32,7 @@ impl Player {
         ctx.set(
             self.position.x,
             self.position.y,
-            WHITE,
+            ORANGE1,
             BLACK,
             to_cp437('@'),
         );

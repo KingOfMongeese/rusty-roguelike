@@ -20,10 +20,9 @@ struct State {
 
 impl State {
     fn new() -> Self {
-
         let mut rng = RandomNumberGenerator::new();
         let map_builder = MapBuilder::new(&mut rng);
-        
+
         Self {
             map: map_builder.map,
             player: Player::new(map_builder.player_start),
@@ -44,6 +43,8 @@ fn main() -> BError {
     let context = BTermBuilder::simple80x50()
         .with_title("Rusty Roguelike")
         .with_fps_cap(60.0)
+        .with_tile_dimensions(16, 16)
+        .with_fitscreen(true)
         .build()?;
 
     main_loop(context, State::new())

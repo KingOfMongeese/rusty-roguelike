@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use std::cmp::{min, max};
+use std::cmp::{max, min};
 
 const NUM_ROOMS: usize = 20;
 
@@ -10,10 +10,11 @@ pub struct MapBuilder {
 }
 
 impl MapBuilder {
-    fn fill(&mut self, tile: TileType) {
-        // TODO is this actually needed? 
-        self.map.tiles.iter_mut().for_each(|t| *t = tile);
-    }
+    // fn fill(&mut self, tile: TileType) {
+    //
+    //     self.map.tiles.iter_mut().for_each(|t| *t = tile);
+    // }
+    // not needed, we can fill in map with walls first. Keeping incase I need later in the book
 
     fn build_random_rooms(&mut self, rng: &mut RandomNumberGenerator) {
         while self.rooms.len() < NUM_ROOMS {
@@ -46,21 +47,17 @@ impl MapBuilder {
     }
 
     fn apply_vertical_tunnel(&mut self, y1: i32, y2: i32, x: i32) {
-
-        for y in min(y1, y2) ..= max(y1, y2) {
-
+        for y in min(y1, y2)..=max(y1, y2) {
             if let Some(idx) = self.map.try_idx(Point::new(x, y)) {
-                self.map.tiles[idx as usize] = TileType::Floor;
+                self.map.tiles[idx] = TileType::Floor;
             }
         }
     }
 
     fn apply_horizontal_tunnel(&mut self, x1: i32, x2: i32, y: i32) {
-
-        for x in min(x1, x2) ..= max(x1, x2) {
-
+        for x in min(x1, x2)..=max(x1, x2) {
             if let Some(idx) = self.map.try_idx(Point::new(x, y)) {
-                self.map.tiles[idx as usize] = TileType::Floor;
+                self.map.tiles[idx] = TileType::Floor;
             }
         }
     }
@@ -84,14 +81,13 @@ impl MapBuilder {
     }
 
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-
         let mut mb = MapBuilder {
             map: Map::new(),
             rooms: Vec::new(),
             player_start: Point::zero(),
         };
 
-        mb.fill(TileType::Wall);
+        // mb.fill(TileType::Wall);
         mb.build_random_rooms(rng);
         mb.build_corridors(rng);
         mb.player_start = mb.rooms[0].center();
