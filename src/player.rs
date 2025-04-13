@@ -10,7 +10,7 @@ impl Player {
     }
 
     /// update player position, checks if pos is valid.
-    pub fn update(&mut self, ctx: &mut BTerm, map: &Map) {
+    pub fn update(&mut self, ctx: &mut BTerm, map: &Map, camera: &mut Camera) {
         if let Some(key) = ctx.key {
             let delta = match key {
                 VirtualKeyCode::A => Point::new(-1, 0),
@@ -23,15 +23,16 @@ impl Player {
             let new_pos = self.position + delta;
             if map.can_enter_tile(new_pos) {
                 self.position = new_pos;
+                camera.on_player_move(new_pos);
             }
         }
     }
 
     /// render the player
-    pub fn render(&self, ctx: &mut BTerm) {
+    pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
         ctx.set(
-            self.position.x,
-            self.position.y,
+            self.position.x - camera.left_x,
+            self.position.y - camera.top_y,
             ORANGE1,
             BLACK,
             to_cp437('@'),
