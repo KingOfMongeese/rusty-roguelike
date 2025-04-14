@@ -43,7 +43,7 @@ impl Map {
 
     /// renders the map on screen
     pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
-        ctx.set_active_console(0);
+        ctx.set_active_console(BASE_LAYER);
         for y in camera.top_y..camera.bottom_y {
             for x in camera.left_x..camera.right_x {
                 if self.in_bounds(Point::new(x, y)) {

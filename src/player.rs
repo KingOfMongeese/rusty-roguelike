@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[derive(Debug)]
 pub struct Player {
     pub position: Point,
 }
@@ -30,6 +31,7 @@ impl Player {
 
     /// render the player
     pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
+        ctx.set_active_console(ENTITY_LAYER);
         ctx.set(
             self.position.x - camera.left_x,
             self.position.y - camera.top_y,
@@ -37,5 +39,6 @@ impl Player {
             BLACK,
             to_cp437('@'),
         );
+        ctx.set_active_console(BASE_LAYER);
     }
 }
