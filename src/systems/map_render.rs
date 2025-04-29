@@ -1,5 +1,3 @@
-use std::mem::offset_of;
-
 use crate::prelude::*;
 
 #[system]
