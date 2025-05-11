@@ -1,25 +1,26 @@
 mod camera;
+mod components;
 mod map;
 mod map_builder;
-mod components;
 mod spawner;
 mod systems;
 
 mod prelude {
     pub use bracket_lib::prelude::*;
-    pub use legion::*;
-    pub use legion::world::SubWorld;
     pub use legion::systems::CommandBuffer;
+    pub use legion::world::SubWorld;
+    pub use legion::*;
     pub const SCREEN_WIDTH: i32 = 80;
     pub const SCREEN_HEIGHT: i32 = 50;
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH / 2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT / 2;
     pub const BASE_LAYER: usize = 0;
     pub const ENTITY_LAYER: usize = 1;
+    pub const DEBUG_LAYER: usize = 2;
     pub use crate::camera::*;
+    pub use crate::components::*;
     pub use crate::map::*;
     pub use crate::map_builder::*;
-    pub use crate::components::*;
     pub use crate::spawner::*;
     pub use crate::systems::*;
 }
@@ -39,6 +40,15 @@ impl State {
         let mut rng = RandomNumberGenerator::new();
         let map_builder = MapBuilder::new(&mut rng);
         spawn_player(&mut ecs, map_builder.player_start);
+
+        // spawn monster in center of each room
+        map_builder
+            .rooms
+            .iter()
+            .skip(1)
+            .map(|room| room.center())
+            .for_each(|room_center| spawn_mosnter(&mut ecs, &mut rng, room_center));
+
         resources.insert(map_builder.map);
         resources.insert(Camera::new(map_builder.player_start));
 
@@ -47,7 +57,6 @@ impl State {
             resources,
             systems: build_scheduler(),
         }
-
     }
 }
 
@@ -56,6 +65,8 @@ impl GameState for State {
         ctx.set_active_console(BASE_LAYER);
         ctx.cls();
         ctx.set_active_console(ENTITY_LAYER);
+        ctx.cls();
+        ctx.set_active_console(DEBUG_LAYER);
         ctx.cls();
         self.resources.insert(ctx.key);
         self.systems.execute(&mut self.ecs, &mut self.resources);

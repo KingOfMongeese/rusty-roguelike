@@ -40,5 +40,4 @@ impl Map {
             Some(get_map_idx(point.x, point.y))
         }
     }
-
 }
