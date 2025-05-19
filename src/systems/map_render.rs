@@ -39,5 +39,4 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
     // }
 
     // batch2.submit(10).expect("BATCH ERROR MAP");
-
 }
