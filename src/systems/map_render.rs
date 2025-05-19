@@ -4,8 +4,8 @@ use crate::prelude::*;
 pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(BASE_LAYER);
-    for y in camera.top_y ..= camera.bottom_y {
-        for x in camera.left_x .. camera.right_x {
+    for y in camera.top_y..=camera.bottom_y {
+        for x in camera.left_x..camera.right_x {
             let pt = Point::new(x, y);
             let offset = Point::new(camera.left_x, camera.top_y);
             if map.in_bounds(pt) {
@@ -14,13 +14,29 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
                     TileType::Floor => to_cp437('.'),
                     TileType::Wall => to_cp437('#'),
                 };
-                draw_batch.set(
-                    pt - offset,
-                    ColorPair::new(WHITE, BLACK),
-                    glyph
-                );
+                let render_pos = pt - offset;
+
+                draw_batch.set(render_pos, ColorPair::new(WHITE, BLACK), glyph);
             }
         }
     }
-    draw_batch.submit(0).expect("Batch Error");
+    draw_batch.submit(0).expect("BATCH ERROR MAP");
+
+    // camera debug
+    // let mut batch2 = DrawBatch::new();
+    // batch2.target(DEBUG_LAYER);
+    // for y in camera.top_y..=camera.bottom_y {
+    //     for x in camera.left_x..camera.right_x {
+    //         let pt = Point::new(x, y);
+    //         let offset = Point::new(camera.left_x, camera.top_y);
+    //         if map.in_bounds(pt) {
+    //             let render_pos = pt - offset;
+    //             if render_pos.x == 0 {
+    //                 batch2.print(render_pos, format!("{y}"));
+    //             }
+    //         }
+    //     }
+    // }
+
+    // batch2.submit(10).expect("BATCH ERROR MAP");
 }
