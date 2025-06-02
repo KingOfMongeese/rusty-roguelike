@@ -100,7 +100,6 @@ fn main() -> BError {
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "terminal8x8.png")
         .with_font("terminal8x8.png", 8, 8)
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "terminal8x8.png")
-        .with_fullscreen(true)
         .build()?;
 
     // add system to exit full screen
