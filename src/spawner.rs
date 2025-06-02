@@ -24,5 +24,6 @@ pub fn spawn_mosnter(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Poin
                 _ => to_cp437('g'),
             },
         },
+        MovingRandomly,
     ));
 }

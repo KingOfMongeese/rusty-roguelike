@@ -1,16 +1,32 @@
 pub use crate::prelude::*; // TODO: find out why pub use here
 
-/// contains render data
+// ########################################
+// Render
+// ########################################
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Render {
     pub color: ColorPair,    // color pair stores fg and bg, from bracket
     pub glyph: FontCharType, // bracket, store char or glyph
 }
 
-/// tags Player
+// ########################################
+// Tags
+// ########################################
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Player;
 
-/// tags Enemy
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Enemy;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct MovingRandomly;
+
+// ########################################
+// Messages
+// ########################################
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct WantsToMove {
+    pub entity: Entity,
+    pub destination: Point,
+}
