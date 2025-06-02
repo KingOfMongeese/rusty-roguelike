@@ -30,3 +30,12 @@ pub struct WantsToMove {
     pub entity: Entity,
     pub destination: Point,
 }
+
+// ########################################
+// Combat
+// ########################################
+
+pub struct Health {
+    pub current: i32,
+    pub max: i32,
+}

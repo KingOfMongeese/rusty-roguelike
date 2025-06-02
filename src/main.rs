@@ -17,9 +17,10 @@ mod prelude {
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT / 2;
     pub const BASE_LAYER: usize = 0;
     pub const ENTITY_LAYER: usize = 1;
-    pub const MESSAGE_LAYER: usize = 2;
-    pub const DEBUG_LAYER: usize = 3;
-    pub const ALL_LAYERS: [usize; 4] = [BASE_LAYER, ENTITY_LAYER, MESSAGE_LAYER, DEBUG_LAYER];
+    pub const HUD_LAYER: usize = 2;
+    pub const MESSAGE_LAYER: usize = 3;
+    pub const DEBUG_LAYER: usize = 4;
+    pub const ALL_LAYERS: [usize; 5] = [BASE_LAYER, ENTITY_LAYER, HUD_LAYER, MESSAGE_LAYER, DEBUG_LAYER];
     pub use crate::camera::*;
     pub use crate::components::*;
     pub use crate::map::*;
@@ -93,13 +94,13 @@ fn main() -> BError {
         .with_dimensions(DISPLAY_WIDTH, DISPLAY_HEIGHT)
         .with_tile_dimensions(32, 32)
         .with_resource_path("resources/")
+        .with_font("terminal8x8.png", 8, 8)
         .with_font("dungeonfont.png", 32, 32)
-        .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
-        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
-        .with_font("terminal8x8.png", 8, 8)
-        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "terminal8x8.png")
-        .with_font("terminal8x8.png", 8, 8)
-        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "terminal8x8.png")
+        .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png") // Base Layer
+        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png") // Entity Layer
+        .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png")// HUD Layer
+        .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png") // Message Layer
+        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "terminal8x8.png") // Debug Layer
         .with_fitscreen(true)
         .build()?;
 
