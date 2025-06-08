@@ -18,7 +18,7 @@ fn display_enemy_count(enemy_count: usize) {
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(MESSAGE_LAYER);
 
-    draw_batch.print(Point::zero(), format!("enemies: {enemy_count}"));
+    draw_batch.print(Point::new(0, 1), format!("enemies: {enemy_count}"));
     draw_batch.submit(7000).expect("Batch Error");
 }
 

@@ -83,6 +83,10 @@ impl GameState for State {
             ctx.cls();
         }
         self.resources.insert(ctx.key);
+
+        // call before inserting the mouse
+        ctx.set_active_console(BASE_LAYER);
+        self.resources.insert(Point::from_tuple(ctx.mouse_pos()));
         let current_state = *self.resources.get::<TurnState>().unwrap();
         match current_state {
             TurnState::AwaitingInput => self

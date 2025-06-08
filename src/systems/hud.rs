@@ -14,7 +14,7 @@ pub fn hud(ecs: &SubWorld) {
         SCREEN_WIDTH * 2,
         player_health.current,
         player_health.max,
-        ColorPair::new(RED, BLACK),
+        ColorPair::new(GREEN, RED),
     );
 
     draw_batch.print_color_centered(

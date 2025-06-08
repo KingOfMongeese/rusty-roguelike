@@ -40,3 +40,10 @@ pub struct Health {
     pub current: i32,
     pub max: i32,
 }
+
+// ########################################
+// Properties
+// ########################################
+
+#[derive(Clone, PartialEq)]
+pub struct Name(pub String);
