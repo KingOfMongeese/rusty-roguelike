@@ -39,7 +39,7 @@ pub fn spawn_mosnter(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Poin
         pos,
         Render {
             color: ColorPair::new(WHITE, BLACK),
-            glyph: glyph,
+            glyph,
         },
         MovingRandomly,
         Health {

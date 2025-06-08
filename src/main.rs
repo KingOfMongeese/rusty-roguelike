@@ -1,3 +1,5 @@
+#[warn(clippy::pedantic)]
+#[warn(clippy::perf)]
 mod camera;
 mod components;
 mod map;
