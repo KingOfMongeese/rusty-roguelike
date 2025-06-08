@@ -20,7 +20,13 @@ mod prelude {
     pub const HUD_LAYER: usize = 2;
     pub const MESSAGE_LAYER: usize = 3;
     pub const DEBUG_LAYER: usize = 4;
-    pub const ALL_LAYERS: [usize; 5] = [BASE_LAYER, ENTITY_LAYER, HUD_LAYER, MESSAGE_LAYER, DEBUG_LAYER];
+    pub const ALL_LAYERS: [usize; 5] = [
+        BASE_LAYER,
+        ENTITY_LAYER,
+        HUD_LAYER,
+        MESSAGE_LAYER,
+        DEBUG_LAYER,
+    ];
     pub use crate::camera::*;
     pub use crate::components::*;
     pub use crate::map::*;
@@ -77,11 +83,17 @@ impl GameState for State {
             ctx.cls();
         }
         self.resources.insert(ctx.key);
-        let current_state = self.resources.get::<TurnState>().unwrap().clone();
+        let current_state = *self.resources.get::<TurnState>().unwrap();
         match current_state {
-            TurnState::AwaitingInput => self.input_systems.execute(&mut self.ecs, &mut self.resources),
-            TurnState::PlayerTurn => self.player_systems.execute(&mut self.ecs, &mut self.resources),
-            TurnState::MonsterTurn => self.monster_systems.execute(&mut self.ecs, &mut self.resources),
+            TurnState::AwaitingInput => self
+                .input_systems
+                .execute(&mut self.ecs, &mut self.resources),
+            TurnState::PlayerTurn => self
+                .player_systems
+                .execute(&mut self.ecs, &mut self.resources),
+            TurnState::MonsterTurn => self
+                .monster_systems
+                .execute(&mut self.ecs, &mut self.resources),
         }
         render_draw_buffer(ctx).expect("Render Error");
     }
@@ -98,7 +110,7 @@ fn main() -> BError {
         .with_font("dungeonfont.png", 32, 32)
         .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png") // Base Layer
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png") // Entity Layer
-        .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png")// HUD Layer
+        .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png") // HUD Layer
         .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png") // Message Layer
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "terminal8x8.png") // Debug Layer
         .with_fitscreen(true)
