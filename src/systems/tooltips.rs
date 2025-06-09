@@ -50,7 +50,10 @@ pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camer
                     );
                 }
                 Err(_) => {
-                    draw_batch.print(fit_tooltip_to_screen(&screen_pos, name.0.clone().len()), name.0.clone());
+                    draw_batch.print(
+                        fit_tooltip_to_screen(&screen_pos, name.0.clone().len()),
+                        name.0.clone(),
+                    );
                 }
             };
         });

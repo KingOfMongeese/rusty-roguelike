@@ -24,7 +24,6 @@ impl Camera {
     }
 
     pub fn on_player_move(&mut self, player_pos: Point) {
-
         // Check horizontal boundaries
         if player_pos.x < self.left_x + self.margin_x {
             let shift = player_pos.x - (self.left_x + self.margin_x);
