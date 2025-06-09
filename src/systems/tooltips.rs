@@ -1,5 +1,14 @@
 use crate::prelude::*;
 
+fn fit_tooltip_to_screen(pos: &Point, tooltip_size_x: usize) -> Point {
+    let mut adjusted_point = Point::from_tuple(pos.to_tuple());
+
+    if (pos.x + tooltip_size_x as i32) > SCREEN_WIDTH {
+        adjusted_point.x = SCREEN_WIDTH - tooltip_size_x as i32;
+    }
+    adjusted_point
+}
+
 #[system]
 #[read_component(Point)]
 #[read_component(Name)]
@@ -24,7 +33,7 @@ pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camer
                     // 1 lower than entity
                     let bar_pos = Point::new(screen_pos.x, screen_pos.y - 2);
                     draw_batch.bar_horizontal(
-                        bar_pos,
+                        fit_tooltip_to_screen(&bar_pos, health.max as usize),
                         health.max,
                         health.current,
                         health.max,
@@ -33,14 +42,15 @@ pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camer
 
                     // 2 higher than entitiy
                     let title_pos = Point::new(screen_pos.x, screen_pos.y - 1);
+                    let tooltip_str = format!("{}: {}", &name.0, health.current);
                     draw_batch.print_color(
-                        title_pos,
-                        format!("{}: {} / {}", &name.0, health.current, health.max),
+                        fit_tooltip_to_screen(&title_pos, tooltip_str.len()),
+                        tooltip_str,
                         ColorPair::new(WHITE, RED),
                     );
                 }
                 Err(_) => {
-                    draw_batch.print(screen_pos, name.0.clone());
+                    draw_batch.print(fit_tooltip_to_screen(&screen_pos, name.0.clone().len()), name.0.clone());
                 }
             };
         });
