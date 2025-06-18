@@ -84,6 +84,7 @@ impl GameState for State {
             ctx.set_active_console(*layer);
             ctx.cls();
         }
+        // inserted each frame
         self.resources.insert(ctx.key);
 
         // call before inserting the mouse

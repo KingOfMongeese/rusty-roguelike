@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+// for each WantsToMove
 #[system(for_each)]
 #[read_component(Player)]
 pub fn movement(
