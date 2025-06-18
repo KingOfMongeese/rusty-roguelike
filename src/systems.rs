@@ -44,6 +44,8 @@ pub fn build_monster_scheduler() -> Schedule {
         .flush()
         .add_system(movement::movement_system())
         .flush()
+        .add_system(collisions::collisions_system())
+        .flush()
         .add_system(map_render::map_render_system())
         .add_system(entity_render::entity_render_system())
         .add_system(hud::hud_system())
