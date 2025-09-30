@@ -12,6 +12,7 @@ pub fn movement(
     commands: &mut CommandBuffer,
 ) {
     if map.can_enter_tile(want_move.destination) {
+        // dest replaces pos in the entnity
         commands.add_component(want_move.entity, want_move.destination);
 
         if ecs
