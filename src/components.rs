@@ -1,32 +1,10 @@
-pub use crate::prelude::*; // TODO: find out why pub use here
+// I refactored this file to be different from the book
+// Each Component is broken out into a module that is descriptive of what the component represents
 
-// ########################################
-// Render
-// ########################################
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Render {
-    pub color: ColorPair,    // color pair stores fg and bg, from bracket
-    pub glyph: FontCharType, // bracket, store char or glyph
-}
+mod messages;
+mod properties;
+mod tags;
 
-// ########################################
-// Tags
-// ########################################
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Player;
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Enemy;
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct MovingRandomly;
-
-// ########################################
-// Messages
-// ########################################
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct WantsToMove {
-    pub entity: Entity,
-    pub destination: Point,
-}
+pub use messages::*;
+pub use properties::*;
+pub use tags::*;
