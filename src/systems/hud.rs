@@ -11,7 +11,7 @@ pub fn hud(ecs: &SubWorld) {
     draw_batch.target(HUD_LAYER);
     draw_batch.bar_horizontal(
         Point::zero(),
-        SCREEN_WIDTH * 2,
+        SCREEN_WIDTH,
         player_health.current,
         player_health.max,
         ColorPair::new(GREEN, RED),

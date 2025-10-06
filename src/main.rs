@@ -55,14 +55,10 @@ impl State {
         let mut rng = RandomNumberGenerator::new();
         let map_builder = MapBuilder::new(&mut rng);
         spawn_player(&mut ecs, map_builder.player_start);
+        spawn_amulet_of_yala(&mut ecs, map_builder.amulet_of_yala_start);
 
-        // spawn monster in center of each room
-        map_builder
-            .rooms
-            .iter()
-            .skip(1)
-            .map(|room| room.center())
-            .for_each(|room_center| spawn_mosnter(&mut ecs, &mut rng, room_center));
+        // refactored into own func
+        spawn_monsters(&map_builder, &mut ecs, &mut rng);
 
         resources.insert(map_builder.map);
         resources.insert(Camera::new(map_builder.player_start));
@@ -75,6 +71,70 @@ impl State {
             player_systems: build_player_scheduler(),
             monster_systems: build_monster_scheduler(),
         }
+    }
+
+    fn game_over(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(HUD_LAYER);
+        ctx.print_color_centered(2, RED, BLACK, "Your quest has ended");
+        ctx.print_color_centered(
+            4,
+            WHITE,
+            BLACK,
+            "You were slain by a monster, your hero's journey has come to a premature end",
+        );
+        ctx.print_color_centered(
+            5,
+            WHITE,
+            BLACK,
+            "The Amulet of Yala remains unclaimed, and your home town is not saved",
+        );
+        ctx.print_color_centered(
+            8,
+            YELLOW,
+            BLACK,
+            "Don't worry the town can send a new hero if you answer the call!",
+        );
+        ctx.print_color_centered(9, GREEN, BLACK, "Press '1' to play again");
+
+        if let Some(VirtualKeyCode::Key1) = ctx.key {
+            self.reset();
+        }
+    }
+
+    fn victory(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(HUD_LAYER);
+        ctx.print_color_centered(2, GREEN, BLACK, "You have won!");
+        ctx.print_color_centered(
+            4,
+            WHITE,
+            BLACK,
+            "You put on The Amulet of Yala and feel its power!",
+        );
+        ctx.print_color_centered(
+            5,
+            WHITE,
+            BLACK,
+            "Your home town is now saved, finally you can rest",
+        );
+        ctx.print_color_centered(7, GREEN, BLACK, "Press '1' to play again");
+
+        if let Some(VirtualKeyCode::Key1) = ctx.key {
+            self.reset();
+        }
+    }
+
+    fn reset(&mut self) {
+        self.ecs = World::default();
+        self.resources = Resources::default();
+        let mut rng = RandomNumberGenerator::new();
+        let map_builder = MapBuilder::new(&mut rng);
+        spawn_player(&mut self.ecs, map_builder.player_start);
+        spawn_amulet_of_yala(&mut self.ecs, map_builder.amulet_of_yala_start);
+        spawn_monsters(&map_builder, &mut self.ecs, &mut rng);
+
+        self.resources.insert(map_builder.map);
+        self.resources.insert(Camera::new(map_builder.player_start));
+        self.resources.insert(TurnState::AwaitingInput);
     }
 }
 
@@ -101,6 +161,8 @@ impl GameState for State {
             TurnState::MonsterTurn => self
                 .monster_systems
                 .execute(&mut self.ecs, &mut self.resources),
+            TurnState::GameOver => self.game_over(ctx),
+            TurnState::Victory => self.victory(ctx),
         }
         render_draw_buffer(ctx).expect("Render Error");
     }

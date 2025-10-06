@@ -9,10 +9,33 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             glyph: to_cp437('@'),
         },
         Health {
-            current: 20,
-            max: 20,
+            current: 10,
+            max: 10,
         },
     ));
+}
+
+pub fn spawn_amulet_of_yala(ecs: &mut World, pos: Point) {
+    ecs.push((
+        Item,
+        AmuletOfYala,
+        pos,
+        Render {
+            color: ColorPair::new(WHITE, BLACK),
+            glyph: to_cp437('|'),
+        },
+        Name("Amulet of Yala".to_string()),
+    ));
+}
+
+pub fn spawn_monsters(map_builder: &MapBuilder, ecs: &mut World, rng: &mut RandomNumberGenerator) {
+    // spawn monster in center of each room
+    map_builder
+        .rooms
+        .iter()
+        .skip(1)
+        .map(|room| room.center())
+        .for_each(|room_center| spawn_mosnter(ecs, rng, room_center));
 }
 
 // ########################################
@@ -41,7 +64,7 @@ pub fn spawn_mosnter(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Poin
             color: ColorPair::new(WHITE, BLACK),
             glyph,
         },
-        MovingRandomly,
+        ChasingPlayer,
         Health {
             current: hp,
             max: hp,

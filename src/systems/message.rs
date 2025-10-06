@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub fn message(ecs: &mut SubWorld) {
     let enemy_count = get_enemy_count(ecs);
     display_enemy_count(enemy_count);
-    display_end_of_game(enemy_count);
+    display_all_monsters_cleared(enemy_count);
 }
 
 fn get_enemy_count(ecs: &mut SubWorld) -> usize {
@@ -22,12 +22,11 @@ fn display_enemy_count(enemy_count: usize) {
     draw_batch.submit(7000).expect("Batch Error");
 }
 
-fn display_end_of_game(enemy_count: usize) {
+fn display_all_monsters_cleared(enemy_count: usize) {
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(MESSAGE_LAYER);
 
     if enemy_count == 0 {
-        draw_batch.print_centered(3, "GAME OVER");
         draw_batch.print_centered(4, "All monsters cleared!");
     }
 
