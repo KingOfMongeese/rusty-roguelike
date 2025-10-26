@@ -12,13 +12,16 @@ pub enum TileType {
 }
 
 pub struct Map {
+    // `tiles` map index to index in `revealed_tiles`
     pub tiles: Vec<TileType>,
+    pub revealed_tiles: Vec<bool>,
 }
 
 impl Map {
     pub fn new() -> Self {
         Self {
             tiles: vec![TileType::Wall; NUM_TILES],
+            revealed_tiles: vec![false; NUM_TILES],
         }
     }
 
