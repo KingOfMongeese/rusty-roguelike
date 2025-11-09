@@ -6,7 +6,7 @@ use crate::prelude::*;
 #[read_component(Point)]
 #[read_component(AmuletOfYala)]
 pub fn end_turn(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState) {
-    let current_state = turn_state.clone();
+    let current_state = *turn_state;
 
     let mut new_state = match turn_state {
         TurnState::AwaitingInput => return,
@@ -17,7 +17,7 @@ pub fn end_turn(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState) {
 
     let mut amulet = <&Point>::query().filter(component::<AmuletOfYala>());
     // only ever 1 amulet
-    let amulet_pos = amulet.iter(ecs).nth(0).unwrap();
+    let amulet_pos = amulet.iter(ecs).next().unwrap();
 
     // TODO this should only be checked during game. no need to check when in menus
     let mut player = <(&Health, &Point)>::query().filter(component::<Player>());

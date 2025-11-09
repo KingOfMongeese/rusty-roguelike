@@ -13,9 +13,12 @@ fn fit_tooltip_to_screen(pos: &Point, tooltip_size_x: usize) -> Point {
 #[read_component(Point)]
 #[read_component(Name)]
 #[read_component(Health)]
+#[read_component(FieldOfView)]
+#[read_component(Player)]
 pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camera: &Camera) {
     // req entity is the entity that owns the components
     let mut positions = <(Entity, &Point, &Name)>::query();
+    let mut fov = <&FieldOfView>::query().filter(component::<Player>());
 
     let offset = Point::new(camera.left_x, camera.top_y);
     let map_pos = *mouse_pos + offset;
@@ -23,9 +26,10 @@ pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camer
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(HUD_LAYER);
 
+    let player_fov = fov.iter(ecs).next().unwrap();
     positions
         .iter(ecs)
-        .filter(|(_, pos, _)| **pos == map_pos)
+        .filter(|(_, pos, _)| **pos == map_pos && player_fov.visible_tiles.contains(&pos))
         .for_each(|(entity, _, name)| {
             let screen_pos = *mouse_pos * 2; // hud layer is 2 times larger than base layer
             match ecs.entry_ref(*entity).unwrap().get_component::<Health>() {
