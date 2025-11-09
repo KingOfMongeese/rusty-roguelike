@@ -23,12 +23,6 @@ pub struct MapBuilder {
 }
 
 impl MapBuilder {
-    // fn fill(&mut self, tile: TileType) {
-    //
-    //     self.map.tiles.iter_mut().for_each(|t| *t = tile);
-    // }
-    // not needed, we can fill in map with walls first. Keeping incase I need later in the book
-
     fn build_random_rooms(&mut self, rng: &mut RandomNumberGenerator) {
         while self.rooms.len() < NUM_ROOMS {
             let room = Rect::with_size(
