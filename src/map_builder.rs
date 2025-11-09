@@ -1,11 +1,23 @@
 use crate::prelude::*;
 use std::cmp::{max, min};
 
+mod empty;
+mod rooms;
+
+use empty::EmptyArchitect;
+use rooms::RoomArchitect;
+
 const NUM_ROOMS: usize = 20;
+
+trait MapArchitect {
+    /// this was refactored from the books `new`.
+    fn construct(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder;
+}
 
 pub struct MapBuilder {
     pub map: Map,
     pub rooms: Vec<Rect>,
+    pub monster_spawns: Vec<Point>,
     pub player_start: Point,
     pub amulet_of_yala_start: Point,
 }
@@ -82,29 +94,25 @@ impl MapBuilder {
     }
 
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        let mut mb = MapBuilder {
-            map: Map::new(),
-            rooms: Vec::new(),
-            player_start: Point::zero(),
-            amulet_of_yala_start: Point::zero(),
-        };
+        let mut architect = RoomArchitect {};
+        architect.construct(rng)
+    }
 
-        // mb.fill(TileType::Wall);
-        mb.build_random_rooms(rng);
-        mb.build_corridors(rng);
-        mb.player_start = mb.rooms[0].center();
+    fn fill(&mut self, with_tile: TileType) {
+        self.map.tiles.iter_mut().for_each(|tile| *tile = with_tile);
+    }
 
+    fn find_most_distant(&self) -> Point {
         let dijkstra_map = DijkstraMap::new(
             SCREEN_WIDTH,
             SCREEN_HEIGHT,
-            &[mb.map.point2d_to_index(mb.player_start)],
-            &mb.map,
+            &vec![self.map.point2d_to_index(self.player_start)],
+            &self.map,
             1024.0,
         );
-
-        // brackets impl of UNREACHABLE in the dijkstra_map sets value to &f32::MAX
         const UNREACHABLE: &f32 = &f32::MAX;
-        let amulet_of_yala_start = mb.map.index_to_point2d(
+
+        self.map.index_to_point2d(
             dijkstra_map
                 .map
                 .iter()
@@ -113,8 +121,19 @@ impl MapBuilder {
                 .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
                 .unwrap()
                 .0,
-        );
-        mb.amulet_of_yala_start = amulet_of_yala_start;
-        mb
+        )
+    }
+}
+
+// book doesnt have defualt
+impl Default for MapBuilder {
+    fn default() -> Self {
+        Self {
+            map: Map::new(),
+            rooms: Vec::new(),
+            monster_spawns: Vec::new(),
+            player_start: Point::zero(),
+            amulet_of_yala_start: Point::zero(),
+        }
     }
 }

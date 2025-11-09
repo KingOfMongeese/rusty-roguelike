@@ -28,17 +28,6 @@ pub fn spawn_amulet_of_yala(ecs: &mut World, pos: Point) {
         Name("Amulet of Yala".to_string()),
     ));
 }
-
-pub fn spawn_monsters(map_builder: &MapBuilder, ecs: &mut World, rng: &mut RandomNumberGenerator) {
-    // spawn monster in center of each room
-    map_builder
-        .rooms
-        .iter()
-        .skip(1)
-        .map(|room| room.center())
-        .for_each(|room_center| spawn_mosnter(ecs, rng, room_center));
-}
-
 // ########################################
 // Monster Type Helpers
 // ########################################
