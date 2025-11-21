@@ -1,11 +1,10 @@
-use crate::prelude::*;
 use super::MapArchitect;
+use crate::prelude::*;
 
-pub struct RoomArchitect{}
+pub struct RoomArchitect {}
 
 impl MapArchitect for RoomArchitect {
     fn construct(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder {
-
         // book doesnt have defualt
         let mut mb = MapBuilder::default();
 
