@@ -1,12 +1,20 @@
 use crate::prelude::*;
 use std::cmp::{max, min};
 
-mod cellular_automata;
-mod empty;
-mod rooms;
 
+#[cfg(feature = "map_empty")]
+mod empty;
+#[cfg(feature = "map_empty")]
 use empty::EmptyArchitect;
+
+#[cfg(feature = "map_rooms")]
+mod rooms;
+#[cfg(feature = "map_rooms")]
 use rooms::RoomArchitect;
+
+#[cfg(feature = "map_cellular_automata")]
+mod cellular_automata;
+#[cfg(feature = "map_cellular_automata")]
 use cellular_automata::CellularAutomataArchitect;
 
 const NUM_ROOMS: usize = 20;
@@ -90,7 +98,16 @@ impl MapBuilder {
     }
 
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
+
+        #[cfg(feature = "map_cellular_automata")]
         let mut architect = CellularAutomataArchitect {};
+
+        #[cfg(feature = "map_rooms")]
+        let mut architect = RoomArchitect {};
+
+        #[cfg(feature = "map_empty")]
+        let mut architect = EmptyArchitect {};
+
         architect.construct(rng)
     }
 
