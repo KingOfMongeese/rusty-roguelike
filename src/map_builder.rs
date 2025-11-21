@@ -3,9 +3,11 @@ use std::cmp::{max, min};
 
 mod empty;
 mod rooms;
+mod cellular_automata;
 
 use empty::EmptyArchitect;
 use rooms::RoomArchitect;
+
 
 const NUM_ROOMS: usize = 20;
 
