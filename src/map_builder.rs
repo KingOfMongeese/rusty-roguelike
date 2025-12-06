@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::{map_builder::prefab::apply_prefab, prelude::*};
 use std::cmp::{max, min};
 
 
@@ -7,6 +7,7 @@ mod empty;
 mod rooms;
 mod cellular_automata;
 mod drunkard;
+mod prefab;
 
 use empty::EmptyArchitect;
 use rooms::RoomArchitect;
@@ -95,13 +96,16 @@ impl MapBuilder {
 
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
 
-        let mut architect: Box<dyn MapArchitect> = match rng.range(0, 3) {
+        let mut architect: Box<dyn MapArchitect> = match rng.range(0, 4) {
             0 => Box::new(DrunkardsWalkArchitect {}),
             1 => Box::new(RoomArchitect {}),
-            _ => Box::new(CellularAutomataArchitect {}),
+            2 => Box::new(CellularAutomataArchitect {}),
+            _ => Box::new(EmptyArchitect {}),
         };
 
-        architect.construct(rng)
+        let mut mb = architect.construct(rng);
+        apply_prefab(&mut mb, rng);
+        mb
     }
 
     fn fill(&mut self, with_tile: TileType) {
