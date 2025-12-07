@@ -1,4 +1,4 @@
-use crate::{map_builder::prefab::apply_prefab, prelude::*};
+use crate::{map_builder::{prefab::apply_prefab, theme::DungeonTheme}, prelude::*};
 use std::cmp::{max, min};
 
 
@@ -8,11 +8,13 @@ mod rooms;
 mod cellular_automata;
 mod drunkard;
 mod prefab;
+mod theme;
 
 use empty::EmptyArchitect;
 use rooms::RoomArchitect;
 use cellular_automata::CellularAutomataArchitect;
 use drunkard::DrunkardsWalkArchitect;
+use theme::*;
 
 const NUM_ROOMS: usize = 20;
 
@@ -21,12 +23,17 @@ trait MapArchitect {
     fn construct(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder;
 }
 
+pub trait MapTheme: Sync + Send {
+    fn tile_to_render(&self, tile_type: TileType) -> FontCharType;
+}
+
 pub struct MapBuilder {
     pub map: Map,
     pub rooms: Vec<Rect>,
     pub monster_spawns: Vec<Point>,
     pub player_start: Point,
     pub amulet_of_yala_start: Point,
+    pub theme: Box<dyn MapTheme>,
 }
 
 impl MapBuilder {
@@ -105,6 +112,12 @@ impl MapBuilder {
 
         let mut mb = architect.construct(rng);
         apply_prefab(&mut mb, rng);
+
+        mb.theme = match rng.range(0, 2) {
+            0 => DungeonTheme::new(),
+            _ => ForestTheme::new(),
+        };
+
         mb
     }
 
@@ -165,6 +178,7 @@ impl Default for MapBuilder {
             monster_spawns: Vec::new(),
             player_start: Point::zero(),
             amulet_of_yala_start: Point::zero(),
+            theme: DungeonTheme::new(),
         }
     }
 }
