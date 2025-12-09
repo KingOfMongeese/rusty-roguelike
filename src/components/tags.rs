@@ -16,4 +16,7 @@ pub struct ChasingPlayer;
 pub struct Item;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ProvidesDngMap;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct AmuletOfYala;
