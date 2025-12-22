@@ -78,8 +78,8 @@ impl CellularAutomataArchitect {
                     DistanceAlg::Pythagoras.distance2d(center, map.index_to_point2d(idx)),
                 )
             }) // get distance for each idx to center
-            .min_by(|(_, distance), (_, distance2)| distance.partial_cmp(distance2).unwrap())// get the smallest value
-            .map(|(idx, _)| idx)// transform tuple(usize, f32) -> usize
+            .min_by(|(_, distance), (_, distance2)| distance.partial_cmp(distance2).unwrap()) // get the smallest value
+            .map(|(idx, _)| idx) // transform tuple(usize, f32) -> usize
             .unwrap();
         map.index_to_point2d(closest_point)
     }

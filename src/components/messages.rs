@@ -12,3 +12,9 @@ pub struct WantsToAttack {
     pub attacker: Entity,
     pub defender: Entity,
 }
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ActivateItem {
+    pub used_by: Entity,
+    pub item: Entity,
+}

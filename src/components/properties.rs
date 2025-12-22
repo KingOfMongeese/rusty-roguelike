@@ -40,3 +40,6 @@ impl FieldOfView {
         }
     }
 }
+
+#[derive(Clone, PartialEq)]
+pub struct Carried(pub Entity);
