@@ -1,19 +1,20 @@
-use crate::{map_builder::{prefab::apply_prefab, theme::DungeonTheme}, prelude::*};
+use crate::{
+    map_builder::{prefab::apply_prefab, theme::DungeonTheme},
+    prelude::*,
+};
 use std::cmp::{max, min};
 
-
-
-mod empty;
-mod rooms;
 mod cellular_automata;
 mod drunkard;
+mod empty;
 mod prefab;
+mod rooms;
 mod theme;
 
-use empty::EmptyArchitect;
-use rooms::RoomArchitect;
 use cellular_automata::CellularAutomataArchitect;
 use drunkard::DrunkardsWalkArchitect;
+use empty::EmptyArchitect;
+use rooms::RoomArchitect;
 use theme::*;
 
 const NUM_ROOMS: usize = 20;
@@ -102,7 +103,6 @@ impl MapBuilder {
     }
 
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-
         let mut architect: Box<dyn MapArchitect> = match rng.range(0, 4) {
             0 => Box::new(DrunkardsWalkArchitect {}),
             1 => Box::new(RoomArchitect {}),
@@ -149,11 +149,15 @@ impl MapBuilder {
 
     fn spawn_monsters(&self, start: &Point, rng: &mut RandomNumberGenerator) -> Vec<Point> {
         const NUM_MONSTERS: usize = 50;
-        let mut spawnable_tiles: Vec<Point> = self.map.tiles
+        let mut spawnable_tiles: Vec<Point> = self
+            .map
+            .tiles
             .iter()
             .enumerate()
-            .filter(|(idx, t)|{
-                **t == TileType::Floor && DistanceAlg::Pythagoras.distance2d(*start, self.map.index_to_point2d(*idx)) > 10.0
+            .filter(|(idx, t)| {
+                **t == TileType::Floor
+                    && DistanceAlg::Pythagoras.distance2d(*start, self.map.index_to_point2d(*idx))
+                        > 10.0
             })
             .map(|(idx, _)| self.map.index_to_point2d(idx))
             .collect();

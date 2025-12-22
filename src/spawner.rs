@@ -77,7 +77,7 @@ pub fn spawn_healing_potion(ecs: &mut World, pos: Point) {
             glyph: to_cp437('!'),
         },
         Name("Healing Potion".to_string()),
-        ProvidesHealing{amount: 6},
+        ProvidesHealing { amount: 6 },
     ));
 }
 
@@ -87,7 +87,7 @@ pub fn spawn_magic_mapper(ecs: &mut World, pos: Point) {
         pos,
         Render {
             color: ColorPair::new(WHITE, BLACK),
-            glyph: to_cp437('{')
+            glyph: to_cp437('{'),
         },
         Name("Dungeon Map".to_string()),
         ProvidesDngMap,
