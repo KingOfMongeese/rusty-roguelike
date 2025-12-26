@@ -43,3 +43,8 @@ impl FieldOfView {
 
 #[derive(Clone, PartialEq)]
 pub struct Carried(pub Entity);
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Player {
+    pub map_level: u32,
+}

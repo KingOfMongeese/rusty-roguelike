@@ -5,7 +5,7 @@ use crate::prelude::*;
 #[read_component(Player)]
 #[read_component(Point)]
 #[read_component(AmuletOfYala)]
-pub fn end_turn(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState) {
+pub fn end_turn(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState, #[resource] map: &Map) {
     let current_state = *turn_state;
 
     let mut new_state = match turn_state {
@@ -16,10 +16,10 @@ pub fn end_turn(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState) {
     };
 
     let mut amulet = <&Point>::query().filter(component::<AmuletOfYala>());
-    // only ever 1 amulet
-    let amulet_pos = amulet.iter(ecs).next().unwrap();
 
-    // TODO this should only be checked during game. no need to check when in menus
+    let amulet_default = Point::new(-1, -1);
+    let amulet_pos = amulet.iter(ecs).next().unwrap_or(&amulet_default);
+
     let mut player = <(&Health, &Point)>::query().filter(component::<Player>());
     player.iter(ecs).for_each(|(hp, pos)| {
         if hp.current < 1 {
@@ -28,6 +28,9 @@ pub fn end_turn(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState) {
 
         if pos == amulet_pos {
             new_state = TurnState::Victory;
+        }
+        if map.tiles[map.point2d_to_index(*pos)] == TileType::Exit {
+            new_state = TurnState::NextLevel;
         }
     });
 

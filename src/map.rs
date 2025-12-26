@@ -9,6 +9,7 @@ pub fn get_map_idx(x: i32, y: i32) -> usize {
 pub enum TileType {
     Wall,
     Floor,
+    Exit,
 }
 
 pub struct Map {
@@ -32,7 +33,8 @@ impl Map {
 
     /// checks if players/monsters can move onto a tile
     pub fn can_enter_tile(&self, point: Point) -> bool {
-        self.in_bounds(point) && self.tiles[get_map_idx(point.x, point.y)] == TileType::Floor
+        let tile = self.tiles[get_map_idx(point.x, point.y)];
+        self.in_bounds(point) && (tile == TileType::Floor || tile == TileType::Exit)
     }
 
     /// checks if a map cord is valid and returns the index if it is
