@@ -33,8 +33,8 @@ impl Map {
 
     /// checks if players/monsters can move onto a tile
     pub fn can_enter_tile(&self, point: Point) -> bool {
-        let tile = self.tiles[get_map_idx(point.x, point.y)];
-        self.in_bounds(point) && (tile == TileType::Floor || tile == TileType::Exit)
+        let tile = self.tiles.get(get_map_idx(point.x, point.y));
+        self.in_bounds(point) && tile.is_some_and(|t| *t == TileType::Exit || *t == TileType::Floor)
     }
 
     /// checks if a map cord is valid and returns the index if it is

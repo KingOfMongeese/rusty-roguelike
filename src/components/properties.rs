@@ -48,3 +48,6 @@ pub struct Carried(pub Entity);
 pub struct Player {
     pub map_level: u32,
 }
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Damage(pub i32);

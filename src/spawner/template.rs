@@ -1,8 +1,8 @@
 use crate::prelude::*;
-use serde::Deserialize;
-use std::fs::File;
-use std::collections::HashSet;
 use legion::systems::CommandBuffer;
+use serde::Deserialize;
+use std::collections::HashSet;
+use std::fs::File;
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub enum EntityType {
@@ -19,24 +19,33 @@ pub struct Template {
     pub glyph: char,
     pub provides: Option<Vec<(String, i32)>>,
     pub hp: Option<i32>,
+    pub base_damage: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Templates {
-    pub entities: Vec<Template>
+    pub entities: Vec<Template>,
 }
 
 impl Templates {
     pub fn load() -> Self {
-        let file = File::open("resources/templates.ron").expect("couldnt open template file: resources/templates.ron");
+        let file = File::open("resources/templates.ron")
+            .expect("couldnt open template file: resources/templates.ron");
         ron::de::from_reader(file).expect("Failed to parse templates: resources/templates.ron")
     }
 
-    pub fn spawn_entities(&self, ecs: &mut World, rng: &mut RandomNumberGenerator, level: usize, spawn_points: &[Point]) {
+    pub fn spawn_entities(
+        &self,
+        ecs: &mut World,
+        rng: &mut RandomNumberGenerator,
+        level: usize,
+        spawn_points: &[Point],
+    ) {
         let mut available_entities = Vec::new();
 
-        self.entities.iter()
-            .filter(|t| t.levels.contains(&level) )
+        self.entities
+            .iter()
+            .filter(|t| t.levels.contains(&level))
             .for_each(|t| {
                 for _ in 0..t.frequency {
                     available_entities.push(t);
@@ -51,11 +60,14 @@ impl Templates {
         });
 
         commands.flush(ecs);
-
     }
 
-    pub fn spawn_entity(&self, pt: &Point, template: &Template, commands: &mut legion::systems::CommandBuffer) {
-
+    pub fn spawn_entity(
+        &self,
+        pt: &Point,
+        template: &Template,
+        commands: &mut legion::systems::CommandBuffer,
+    ) {
         let entity = commands.push((
             pt.clone(),
             Render {
@@ -66,26 +78,36 @@ impl Templates {
         ));
 
         match template.entity_type {
-            EntityType::Item => commands.add_component(entity, Item{}),
+            EntityType::Item => commands.add_component(entity, Item {}),
             EntityType::Enemy => {
-                commands.add_component(entity, Enemy{});
+                commands.add_component(entity, Enemy {});
                 commands.add_component(entity, FieldOfView::new(6));
-                commands.add_component(entity, ChasingPlayer{});
-                commands.add_component(entity, Health {
-                    current: template.hp.unwrap(),
-                    max: template.hp.unwrap(),
-                });
+                commands.add_component(entity, ChasingPlayer {});
+                commands.add_component(
+                    entity,
+                    Health {
+                        current: template.hp.unwrap(),
+                        max: template.hp.unwrap(),
+                    },
+                );
             }
         }
 
         if let Some(effects) = &template.provides {
-            effects.iter().for_each(|(provides, n)|{
-                match provides.as_str() {
-                    "Healing" => commands.add_component(entity, ProvidesHealing{amount: *n}),
-                    "MagicMap" => commands.add_component(entity, ProvidesDngMap{}),
+            effects
+                .iter()
+                .for_each(|(provides, n)| match provides.as_str() {
+                    "Healing" => commands.add_component(entity, ProvidesHealing { amount: *n }),
+                    "MagicMap" => commands.add_component(entity, ProvidesDngMap {}),
                     _ => println!("Warning: unknown effect: {provides}"),
-                }
-            });
+                });
+        }
+
+        if let Some(damage) = &template.base_damage {
+            commands.add_component(entity, Damage(*damage));
+            if template.entity_type == EntityType::Item {
+                commands.add_component(entity, Weapon {});
+            }
         }
     }
 }

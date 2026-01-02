@@ -103,11 +103,10 @@ impl MapBuilder {
     }
 
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        let mut architect: Box<dyn MapArchitect> = match rng.range(0, 4) {
+        let mut architect: Box<dyn MapArchitect> = match rng.range(0, 3) {
             0 => Box::new(DrunkardsWalkArchitect {}),
             1 => Box::new(RoomArchitect {}),
-            2 => Box::new(CellularAutomataArchitect {}),
-            _ => Box::new(EmptyArchitect {}),
+            _ => Box::new(CellularAutomataArchitect {}),
         };
 
         let mut mb = architect.construct(rng);
