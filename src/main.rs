@@ -146,7 +146,7 @@ Now adventurers and mercenaries dare to enter the dangerous enchanted dungeon to
         let mut y = 2;
         let mut line = String::new();
 
-        text.split(' ').enumerate().for_each(|(cnt, word)|{
+        text.split(' ').enumerate().for_each(|(cnt, word)| {
             if line.chars().count() + word.chars().count() > (SCREEN_WIDTH - 2) as usize {
                 ctx.print_color(0, y, YELLOW3, BLACK, line.to_string());
                 y += 2;
@@ -160,6 +160,7 @@ Now adventurers and mercenaries dare to enter the dangerous enchanted dungeon to
             }
         });
 
+        self.print_credits(ctx);
         self.print_exit_options(ctx);
 
         if let Some(key) = ctx.key {
@@ -172,11 +173,31 @@ Now adventurers and mercenaries dare to enter the dangerous enchanted dungeon to
     }
 
     fn print_exit_options(&mut self, ctx: &mut BTerm) {
-
         ctx.set_active_console(HUD_LAYER);
+        self.print_credits(ctx);
 
         ctx.print_color(0, SCREEN_HEIGHT - 1, GREEN, BLACK, "(p) play");
         ctx.print_color_right(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, RED, BLACK, "(e) exit");
+    }
+
+    fn print_credits(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(HUD_LAYER);
+
+        let mut starting_y = SCREEN_HEIGHT / 2;
+
+        ctx.print_centered(starting_y, "CREDITS");
+
+        let credits_text = [
+            "|---------------------------|",
+            "| Programmer KingOfMongeese |",
+            "| Backstory  Josh Zillinger |",
+            "|---------------------------|",
+        ];
+
+        credits_text.iter().for_each(|line| {
+            starting_y += 1;
+            ctx.print_centered(starting_y, line);
+        });
     }
 
     fn reset(&mut self) {
