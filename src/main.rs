@@ -66,7 +66,7 @@ impl State {
 
         resources.insert(map_builder.map);
         resources.insert(Camera::new(map_builder.player_start));
-        resources.insert(TurnState::AwaitingInput);
+        resources.insert(TurnState::Menu);
         resources.insert(map_builder.theme);
 
         Self {
@@ -99,10 +99,14 @@ impl State {
             BLACK,
             "Don't worry the town can send a new hero if you answer the call!",
         );
-        ctx.print_color_centered(9, GREEN, BLACK, "Press '1' to play again");
 
-        if let Some(VirtualKeyCode::Key1) = ctx.key {
-            self.reset();
+        self.print_exit_options(ctx);
+        if let Some(key) = ctx.key {
+            match key {
+                VirtualKeyCode::P => self.reset(),
+                VirtualKeyCode::E => ctx.quitting = true,
+                _ => (),
+            }
         }
     }
 
@@ -121,11 +125,79 @@ impl State {
             BLACK,
             "Your home town is now saved, finally you can rest",
         );
-        ctx.print_color_centered(7, GREEN, BLACK, "Press '1' to play again");
 
-        if let Some(VirtualKeyCode::Key1) = ctx.key {
-            self.reset();
+        self.print_exit_options(ctx);
+        if let Some(key) = ctx.key {
+            match key {
+                VirtualKeyCode::P => self.reset(),
+                VirtualKeyCode::E => ctx.quitting = true,
+                _ => (),
+            }
         }
+    }
+
+    fn menu(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(HUD_LAYER);
+
+        let text = "Plague strikes the land! Thousands fall sick every day as kingdoms lay on the brink of all out war. The only hope for the land is The Amulet of YALA!
+Created in ages past by the great enchanter YALA with the power to stop all disease. But before it was used it was locked away in the EVER-SHIFTING DUNGEON OF YALA.
+Now adventurers and mercenaries dare to enter the dangerous enchanted dungeon to prove their mettle...";
+
+        let mut y = 2;
+        let mut line = String::new();
+
+        text.split(' ').enumerate().for_each(|(cnt, word)| {
+            if line.chars().count() + word.chars().count() > (SCREEN_WIDTH - 2) as usize {
+                ctx.print_color(0, y, YELLOW3, BLACK, line.to_string());
+                y += 2;
+                line = "".to_string();
+            }
+
+            line = format!("{line} {word}");
+
+            if cnt == text.split(' ').count() - 1 {
+                ctx.print_color(0, y, YELLOW, BLACK, line.to_string());
+            }
+        });
+
+        self.print_credits(ctx);
+        self.print_exit_options(ctx);
+
+        if let Some(key) = ctx.key {
+            match key {
+                VirtualKeyCode::P => self.resources.insert(TurnState::AwaitingInput),
+                VirtualKeyCode::E => ctx.quitting = true,
+                _ => (),
+            }
+        }
+    }
+
+    fn print_exit_options(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(HUD_LAYER);
+        self.print_credits(ctx);
+
+        ctx.print_color(0, SCREEN_HEIGHT - 1, GREEN, BLACK, "(p) play");
+        ctx.print_color_right(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, RED, BLACK, "(e) exit");
+    }
+
+    fn print_credits(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(HUD_LAYER);
+
+        let mut starting_y = SCREEN_HEIGHT / 2;
+
+        ctx.print_centered(starting_y, "CREDITS");
+
+        let credits_text = [
+            "|---------------------------|",
+            "| Programmer KingOfMongeese |",
+            "| Backstory  Josh Zillinger |",
+            "|---------------------------|",
+        ];
+
+        credits_text.iter().for_each(|line| {
+            starting_y += 1;
+            ctx.print_centered(starting_y, line);
+        });
     }
 
     fn reset(&mut self) {
@@ -246,6 +318,7 @@ impl GameState for State {
             TurnState::GameOver => self.game_over(ctx),
             TurnState::Victory => self.victory(ctx),
             TurnState::NextLevel => self.advance_level(),
+            TurnState::Menu => self.menu(ctx),
         }
         render_draw_buffer(ctx).expect("Render Error");
     }
