@@ -4,8 +4,14 @@ use crate::prelude::*;
 #[read_component(Health)]
 #[read_component(Player)]
 #[read_component(Point)]
+#[read_component(Name)]
 #[read_component(AmuletOfYala)]
-pub fn end_turn(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState, #[resource] map: &Map) {
+pub fn end_turn(
+    ecs: &mut SubWorld,
+    #[resource] turn_state: &mut TurnState,
+    #[resource] map: &Map,
+    #[resource] game_log: &mut GameLog,
+) {
     let current_state = *turn_state;
 
     let mut new_state = match turn_state {
@@ -30,6 +36,10 @@ pub fn end_turn(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState, #[re
             new_state = TurnState::Victory;
         }
         if map.tiles[map.point2d_to_index(*pos)] == TileType::Exit {
+            game_log.log(GameLogEvent::new(
+                ColorPair::new(PURPLE, BLACK),
+                "You advanced a level".to_string(),
+            ));
             new_state = TurnState::NextLevel;
         }
     });

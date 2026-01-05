@@ -6,14 +6,12 @@ use std::cmp::{max, min};
 
 mod cellular_automata;
 mod drunkard;
-mod empty;
 mod prefab;
 mod rooms;
 mod theme;
 
 use cellular_automata::CellularAutomataArchitect;
 use drunkard::DrunkardsWalkArchitect;
-use empty::EmptyArchitect;
 use rooms::RoomArchitect;
 use theme::*;
 

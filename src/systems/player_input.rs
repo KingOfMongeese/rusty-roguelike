@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::{game_log, prelude::*};
 
 #[system]
 #[read_component(Point)]
@@ -7,12 +7,14 @@ use crate::prelude::*;
 #[read_component(Carried)]
 #[read_component(Item)]
 #[read_component(Weapon)]
+#[read_component(Name)]
 #[write_component(Health)]
 pub fn player_input(
     ecs: &mut SubWorld,
     commands: &mut CommandBuffer,
     #[resource] key: &Option<VirtualKeyCode>,
     #[resource] turn_state: &mut TurnState,
+    #[resource] game_log: &mut GameLog,
 ) {
     let mut players = <(Entity, &Point)>::query().filter(component::<Player>());
 
@@ -44,6 +46,13 @@ pub fn player_input(
                                     .for_each(|(e, _, _)| {
                                         commands.remove(*e);
                                     });
+                            }
+
+                            if let Ok(name) = e.get_component::<Name>() {
+                                game_log.log(GameLogEvent::new(
+                                    ColorPair::new(CYAN, BLACK),
+                                    format!("Picked up: {}", name.0),
+                                ));
                             }
                         }
                     });

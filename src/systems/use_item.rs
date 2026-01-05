@@ -1,11 +1,17 @@
-use crate::prelude::*;
+use crate::{game_log, prelude::*};
 
 #[system]
 #[read_component(ActivateItem)]
 #[read_component(ProvidesHealing)]
+#[read_component(Name)]
 #[write_component(Health)]
 #[read_component(ProvidesDngMap)]
-pub fn use_items(ecs: &mut SubWorld, commands: &mut CommandBuffer, #[resource] map: &mut Map) {
+pub fn use_items(
+    ecs: &mut SubWorld,
+    commands: &mut CommandBuffer,
+    #[resource] map: &mut Map,
+    #[resource] game_log: &mut GameLog,
+) {
     let mut healing_to_appy = Vec::<(Entity, i32)>::new();
 
     <(Entity, &ActivateItem)>::query()
@@ -19,6 +25,13 @@ pub fn use_items(ecs: &mut SubWorld, commands: &mut CommandBuffer, #[resource] m
 
                 if let Ok(_mapper) = item.get_component::<ProvidesDngMap>() {
                     map.revealed_tiles.iter_mut().for_each(|t| *t = true);
+                }
+
+                if let Ok(name) = item.get_component::<Name>() {
+                    game_log.log(GameLogEvent::new(
+                        ColorPair::new(YELLOW, BLACK),
+                        format!("You used: {}", name.0),
+                    ));
                 }
             }
 
