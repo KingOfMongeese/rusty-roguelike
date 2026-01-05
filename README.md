@@ -13,7 +13,7 @@ Based on the dungeon crawler from [Hands on Rust](https://pragprog.com/titles/hw
 - [ ] Loot chest with items
 - [ ] BOSS
 - [ ] Particle effects
-- [ ] Game Log
+- [x] Game Log
 - [x] Main menu
 - [x] Credits
 

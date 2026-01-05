@@ -6,7 +6,7 @@ use crate::prelude::*;
 #[read_component(Carried)]
 #[read_component(Item)]
 #[read_component(Name)]
-pub fn hud(ecs: &SubWorld) {
+pub fn hud(ecs: &SubWorld, #[resource] game_log: &GameLog) {
     let mut health_query = <&Health>::query().filter(component::<Player>());
     let player_health = health_query.iter(ecs).next().unwrap();
 
@@ -62,5 +62,6 @@ pub fn hud(ecs: &SubWorld) {
         );
     }
 
+    game_log.render((SCREEN_HEIGHT - 8) as usize);
     draw_batch.submit(1000).expect("Batch ERROR");
 }

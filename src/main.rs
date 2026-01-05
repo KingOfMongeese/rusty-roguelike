@@ -2,6 +2,7 @@
 #[warn(clippy::perf)]
 mod camera;
 mod components;
+mod game_log;
 mod map;
 mod map_builder;
 mod spawner;
@@ -31,6 +32,7 @@ mod prelude {
     ];
     pub use crate::camera::*;
     pub use crate::components::*;
+    pub use crate::game_log::*;
     pub use crate::map::*;
     pub use crate::map_builder::*;
     pub use crate::spawner::*;
@@ -68,6 +70,7 @@ impl State {
         resources.insert(Camera::new(map_builder.player_start));
         resources.insert(TurnState::Menu);
         resources.insert(map_builder.theme);
+        resources.insert(GameLog::new());
 
         Self {
             ecs,
@@ -217,6 +220,7 @@ Now adventurers and mercenaries dare to enter the dangerous enchanted dungeon to
         self.resources.insert(Camera::new(map_builder.player_start));
         self.resources.insert(TurnState::AwaitingInput);
         self.resources.insert(map_builder.theme);
+        self.resources.insert(GameLog::new());
     }
 
     fn advance_level(&mut self) {
