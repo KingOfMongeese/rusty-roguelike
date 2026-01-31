@@ -285,6 +285,13 @@ Now adventurers and mercenaries dare to enter the dangerous enchanted dungeon to
                 entities_to_keep.insert(e);
             });
 
+        <(Entity, &WeaponInUse)>::query()
+            .iter(&self.ecs)
+            .filter(|(e, in_use)| in_use.0 == player)
+            .for_each(|(e, _)|{
+                entities_to_keep.insert(*e);
+            });
+
         let mut cb = CommandBuffer::new(&mut self.ecs);
         for e in Entity::query().iter(&self.ecs) {
             if !entities_to_keep.contains(e) {
