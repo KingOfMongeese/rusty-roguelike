@@ -14,10 +14,11 @@ fn fit_tooltip_to_screen(pos: &Point, tooltip_size_x: usize) -> Point {
 #[read_component(Name)]
 #[read_component(Health)]
 #[read_component(FieldOfView)]
+#[read_component(Tooltip)]
 #[read_component(Player)]
 pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camera: &Camera) {
     // req entity is the entity that owns the components
-    let mut positions = <(Entity, &Point, &Name)>::query();
+    let mut positions = <(Entity, &Point, &Name, &Tooltip)>::query();
     let mut fov = <&FieldOfView>::query().filter(component::<Player>());
 
     let offset = Point::new(camera.left_x, camera.top_y);
@@ -29,13 +30,25 @@ pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camer
     let player_fov = fov.iter(ecs).next().unwrap();
     positions
         .iter(ecs)
-        .filter(|(_, pos, _)| **pos == map_pos && player_fov.visible_tiles.contains(&pos))
-        .for_each(|(entity, _, name)| {
+        .filter(|(_, pos, _, _)| **pos == map_pos && player_fov.visible_tiles.contains(&pos))
+        .for_each(|(entity, pos, name, tooltip)| {
             let screen_pos = *mouse_pos * 2; // hud layer is 2 times larger than base layer
+            let mut next_y = screen_pos.y - 1;
+
+            // title
+            let title_pos = Point::new(screen_pos.x, next_y);
+            let title_contents = format!("{}", &name.0);
+            draw_batch.print_color(
+                fit_tooltip_to_screen(&title_pos, title_contents.len()),
+                title_contents,
+                ColorPair::new(WHITE, RED),
+            );
+            next_y += 1;
+
+            // process hp tooltip if needed
             match ecs.entry_ref(*entity).unwrap().get_component::<Health>() {
                 Ok(health) => {
-                    // 1 lower than entity
-                    let bar_pos = Point::new(screen_pos.x, screen_pos.y - 2);
+                    let bar_pos = Point::new(screen_pos.x, next_y);
                     draw_batch.bar_horizontal(
                         fit_tooltip_to_screen(&bar_pos, health.max as usize),
                         health.max,
@@ -43,23 +56,40 @@ pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camer
                         health.max,
                         ColorPair::new(GREEN, RED),
                     );
+                    next_y += 1;
 
-                    // 2 higher than entitiy
-                    let title_pos = Point::new(screen_pos.x, screen_pos.y - 1);
-                    let tooltip_str = format!("{}: {}", &name.0, health.current);
+                    let hp_pos = Point::new(screen_pos.x, next_y);
+                    let hp_contents = format!("HP: {}/{}", &health.current, &health.max);
                     draw_batch.print_color(
-                        fit_tooltip_to_screen(&title_pos, tooltip_str.len()),
-                        tooltip_str,
+                        fit_tooltip_to_screen(&hp_pos, hp_contents.len()),
+                        hp_contents,
                         ColorPair::new(WHITE, RED),
                     );
+                    next_y += 1;
                 }
                 Err(_) => {
-                    draw_batch.print(
-                        fit_tooltip_to_screen(&screen_pos, name.0.clone().len()),
-                        name.0.clone(),
-                    );
+                    // dont process health if no hp component
+                    ()
                 }
             };
+
+            // process tooltip (all templates have a tooltip, just like name)
+            let tooltip_pos = Point::new(screen_pos.x, next_y);
+            let tooltip_contents = format!("<{}>", &tooltip.0);
+            draw_batch.print_color(
+                fit_tooltip_to_screen(&tooltip_pos, tooltip_contents.len()),
+                tooltip_contents,
+                ColorPair::new(WHITE, RED),
+            );
+            next_y += 1;
+
+            let pos_tooltip_pos = Point::new(screen_pos.x, next_y);
+            let tooltip_contents = format!("x,y: ({}, {})", pos.x, pos.y);
+            draw_batch.print_color(
+                fit_tooltip_to_screen(&pos_tooltip_pos, tooltip_contents.len()),
+                tooltip_contents,
+                ColorPair::new(WHITE, RED),
+            );
         });
 
     draw_batch.submit(10100).expect("Batch Error");

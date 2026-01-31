@@ -18,6 +18,7 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
         FieldOfView::new(8),
         Damage(1),
         Name("You".to_string()),
+        Tooltip("a brave soul".to_string()),
     ));
 }
 
@@ -31,6 +32,7 @@ pub fn spawn_amulet_of_yala(ecs: &mut World, pos: Point) {
             glyph: to_cp437('|'),
         },
         Name("Amulet of Yala".to_string()),
+        Tooltip("Win the game!".to_string()),
     ));
 }
 

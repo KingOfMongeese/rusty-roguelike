@@ -4,6 +4,8 @@ use crate::prelude::*;
 #[system(for_each)]
 #[read_component(Player)]
 #[read_component(FieldOfView)]
+#[read_component(Point)]
+#[read_component(Health)]
 pub fn movement(
     entity: &Entity,
     want_move: &WantsToMove,
@@ -12,7 +14,12 @@ pub fn movement(
     ecs: &mut SubWorld,
     commands: &mut CommandBuffer,
 ) {
-    if map.can_enter_tile(want_move.destination) {
+    let existing_positions: Vec<(&Entity, &Point, &Health)> =
+        <(Entity, &Point, &Health)>::query().iter(ecs).collect();
+
+    if map.can_enter_tile(want_move.destination)
+        && !is_occupied(&existing_positions, &want_move.destination)
+    {
         // dest replaces pos in the entnity
         commands.add_component(want_move.entity, want_move.destination);
 
@@ -32,4 +39,19 @@ pub fn movement(
     }
     // remove msg entity, contains just the msg component
     commands.remove(*entity);
+}
+
+fn is_occupied(existing_pos: &Vec<(&Entity, &Point, &Health)>, destination: &Point) -> bool {
+    let mut is_occupied = false;
+    if existing_pos
+        .iter()
+        .map(|(_, pos, _)| **pos)
+        .filter(|pos| *pos == *destination)
+        .count()
+        > 0
+    {
+        is_occupied = true;
+    }
+
+    is_occupied
 }

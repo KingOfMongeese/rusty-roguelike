@@ -51,3 +51,6 @@ pub struct Player {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Damage(pub i32);
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Tooltip(pub String);
