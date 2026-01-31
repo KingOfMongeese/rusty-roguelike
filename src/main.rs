@@ -287,7 +287,7 @@ Now adventurers and mercenaries dare to enter the dangerous enchanted dungeon to
 
         <(Entity, &WeaponInUse)>::query()
             .iter(&self.ecs)
-            .filter(|(e, in_use)| in_use.0 == player)
+            .filter(|(_e, in_use)| in_use.0 == player)
             .for_each(|(e, _)|{
                 entities_to_keep.insert(*e);
             });
