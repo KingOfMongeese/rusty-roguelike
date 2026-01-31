@@ -4,8 +4,10 @@ use crate::prelude::*;
 #[read_component(Health)]
 #[read_component(Player)]
 #[read_component(Carried)]
+#[read_component(WeaponInUse)]
 #[read_component(Item)]
 #[read_component(Name)]
+#[read_component(Damage)]
 pub fn hud(ecs: &SubWorld, #[resource] game_log: &GameLog) {
     let mut health_query = <&Health>::query().filter(component::<Player>());
     let player_health = health_query.iter(ecs).next().unwrap();
@@ -61,6 +63,19 @@ pub fn hud(ecs: &SubWorld, #[resource] game_log: &GameLog) {
             ColorPair::new(YELLOW, BLACK),
         );
     }
+
+    let mut weapon_in_use_query = <(&Name, &WeaponInUse, &Damage)>::query();
+
+    weapon_in_use_query
+        .iter(ecs)
+        .filter(|(_, weapon_in_use, _)| weapon_in_use.0 == player)
+        .for_each(|(name, _, damage)| {
+            draw_batch.print_color_right(
+                Point::new(SCREEN_WIDTH -1, SCREEN_HEIGHT -1),
+                format!("Using: {}, +{} damage", name.0, damage.0),
+                ColorPair::new(WHITE, BLACK),
+            );
+        });
 
     game_log.render((SCREEN_HEIGHT - 8) as usize);
     draw_batch.submit(1000).expect("Batch ERROR");

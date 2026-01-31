@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use crate::prelude::*;
 
 fn fit_tooltip_to_screen(pos: &Point, tooltip_size_x: usize) -> Point {
@@ -33,7 +31,7 @@ pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camer
     positions
         .iter(ecs)
         .filter(|(_, pos, _, _)| **pos == map_pos && player_fov.visible_tiles.contains(&pos))
-        .for_each(|(entity, _, name, tooltip)| {
+        .for_each(|(entity, pos, name, tooltip)| {
             let screen_pos = *mouse_pos * 2; // hud layer is 2 times larger than base layer
             let mut next_y = screen_pos.y - 1;
 
@@ -80,6 +78,15 @@ pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camer
             let tooltip_contents = format!("<{}>", &tooltip.0);
             draw_batch.print_color(
                 fit_tooltip_to_screen(&tooltip_pos, tooltip_contents.len()),
+                tooltip_contents,
+                ColorPair::new(WHITE, RED),
+            );
+            next_y += 1;
+
+            let pos_tooltip_pos = Point::new(screen_pos.x, next_y);
+            let tooltip_contents = format!("x,y: ({}, {})", pos.x, pos.y);
+            draw_batch.print_color(
+                fit_tooltip_to_screen(&pos_tooltip_pos, tooltip_contents.len()),
                 tooltip_contents,
                 ColorPair::new(WHITE, RED),
             );

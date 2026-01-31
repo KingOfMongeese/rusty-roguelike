@@ -1,12 +1,10 @@
-use ron::de;
-
 use crate::prelude::*;
 
 #[system]
 #[read_component(WantsToAttack)]
 #[read_component(Player)]
 #[read_component(Damage)]
-#[read_component(Carried)]
+#[read_component(WeaponInUse)]
 #[read_component(Name)]
 #[write_component(Health)]
 pub fn combat(
@@ -39,9 +37,9 @@ pub fn combat(
             0
         };
 
-        let weapon_damage: i32 = <(&Carried, &Damage)>::query()
+        let weapon_damage: i32 = <(&WeaponInUse, &Damage)>::query()
             .iter(ecs)
-            .filter(|(carried, _)| carried.0 == *attacker)
+            .filter(|(weapon_in_use_by, _)| weapon_in_use_by.0 == *attacker)
             .map(|(_, dmg)| dmg.0)
             .sum();
 

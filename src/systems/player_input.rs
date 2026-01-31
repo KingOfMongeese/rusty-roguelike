@@ -1,4 +1,4 @@
-use crate::{game_log, prelude::*};
+use crate::prelude::*;
 
 #[system]
 #[read_component(Point)]
@@ -9,6 +9,7 @@ use crate::{game_log, prelude::*};
 #[read_component(Weapon)]
 #[read_component(Name)]
 #[write_component(Health)]
+#[write_component(WeaponInUse)]
 pub fn player_input(
     ecs: &mut SubWorld,
     commands: &mut CommandBuffer,
@@ -34,18 +35,23 @@ pub fn player_input(
                     .iter(ecs)
                     .filter(|(_entity, _item, &item_pos)| item_pos == player_pos)
                     .for_each(|(entity, _item, _item_pos)| {
+                        // remove the point, its not longer on the map
                         commands.remove_component::<Point>(*entity);
-                        commands.add_component(*entity, Carried(player));
 
                         if let Ok(e) = ecs.entry_ref(*entity) {
                             if e.get_component::<Weapon>().is_ok() {
-                                <(Entity, &Carried, &Weapon)>::query()
+                                // only have 1 weapon at a time, remove the existing weapon
+                                <(Entity, &WeaponInUse)>::query()
                                     .iter(ecs)
-                                    // commandBuffer hasnt added carried yet to the weapon we just picked up, so its not removed
-                                    .filter(|(_, c, _)| c.0 == player)
-                                    .for_each(|(e, _, _)| {
+                                    .filter(|(_, c)| c.0 == player)
+                                    .for_each(|(e, _)| {
                                         commands.remove(*e);
                                     });
+
+                                commands.add_component(*entity, WeaponInUse(player));
+                            } else {
+                                // normal item
+                                commands.add_component(*entity, Carried(player));
                             }
 
                             if let Ok(name) = e.get_component::<Name>() {

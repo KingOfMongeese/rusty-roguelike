@@ -14,10 +14,12 @@ pub fn movement(
     ecs: &mut SubWorld,
     commands: &mut CommandBuffer,
 ) {
-    let existing_positions: Vec<(&Entity, &Point, &Health)> = <(Entity, &Point, &Health)>::query().iter(ecs).collect();
+    let existing_positions: Vec<(&Entity, &Point, &Health)> =
+        <(Entity, &Point, &Health)>::query().iter(ecs).collect();
 
-
-    if map.can_enter_tile(want_move.destination) && !is_occupied(&existing_positions, &want_move.destination){
+    if map.can_enter_tile(want_move.destination)
+        && !is_occupied(&existing_positions, &want_move.destination)
+    {
         // dest replaces pos in the entnity
         commands.add_component(want_move.entity, want_move.destination);
 
@@ -41,8 +43,13 @@ pub fn movement(
 
 fn is_occupied(existing_pos: &Vec<(&Entity, &Point, &Health)>, destination: &Point) -> bool {
     let mut is_occupied = false;
-    if existing_pos.iter().map(|(_, pos, _)| **pos).filter(|pos| *pos == *destination).count() > 0 {
-        println!("cant move monster");
+    if existing_pos
+        .iter()
+        .map(|(_, pos, _)| **pos)
+        .filter(|pos| *pos == *destination)
+        .count()
+        > 0
+    {
         is_occupied = true;
     }
 

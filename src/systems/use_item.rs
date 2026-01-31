@@ -1,4 +1,4 @@
-use crate::{game_log, prelude::*};
+use crate::prelude::*;
 
 #[system]
 #[read_component(ActivateItem)]
