@@ -20,6 +20,7 @@ pub struct Template {
     pub provides: Option<Vec<(String, i32)>>,
     pub hp: Option<i32>,
     pub base_damage: Option<i32>,
+    pub tooltip: String,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -75,6 +76,7 @@ impl Templates {
                 glyph: to_cp437(template.glyph),
             },
             Name(template.name.clone()),
+            Tooltip(template.tooltip.clone()),
         ));
 
         match template.entity_type {

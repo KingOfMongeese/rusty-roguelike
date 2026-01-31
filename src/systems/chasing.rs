@@ -54,8 +54,8 @@ pub fn chasing(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuff
                                 defender: *defender,
                             },
                         ));
+                        attacked = true;
                     }
-                    attacked = true;
                 });
 
             if !attacked {
