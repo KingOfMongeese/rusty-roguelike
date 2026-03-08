@@ -71,7 +71,7 @@ pub fn hud(ecs: &SubWorld, #[resource] game_log: &GameLog) {
         .filter(|(_, weapon_in_use, _)| weapon_in_use.0 == player)
         .for_each(|(name, _, damage)| {
             draw_batch.print_color_right(
-                Point::new(SCREEN_WIDTH -1, SCREEN_HEIGHT -1),
+                Point::new(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
                 format!("Using: {}, +{} damage", name.0, damage.0),
                 ColorPair::new(WHITE, BLACK),
             );
